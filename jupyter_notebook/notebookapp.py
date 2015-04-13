@@ -94,9 +94,8 @@ from .utils import url_path_join, check_pid
 #-----------------------------------------------------------------------------
 
 _examples = """
-ipython notebook                       # start the notebook
-ipython notebook --profile=sympy       # use the sympy profile
-ipython notebook --certfile=mycert.pem # use SSL/TLS certificate
+jupyter notebook                       # start the notebook
+jupyter notebook --certfile=mycert.pem # use SSL/TLS certificate
 """
 
 #-----------------------------------------------------------------------------
@@ -257,7 +256,7 @@ class NotebookWebApplication(web.Application):
 
 class NbserverListApp(JupyterApp):
     
-    description="List currently running notebook servers in this profile."
+    description="List currently running notebook servers."
     
     flags = dict(
         json=({'NbserverListApp': {'json': True}},
@@ -364,8 +363,6 @@ class NotebookApp(JupyterApp):
         """override default log format to include time"""
         return u"%(color)s[%(levelname)1.1s %(asctime)s.%(msecs).03d %(name)s]%(end_color)s %(message)s"
 
-    # create requested profiles by default, if they don't exist:
-    auto_create = Bool(True)
 
     # file to be opened in the notebook server
     file_to_run = Unicode('', config=True)
@@ -775,7 +772,7 @@ class NotebookApp(JupyterApp):
                 self.exit(1)
             
             # Use config here, to ensure that it takes higher priority than
-            # anything that comes from the profile.
+            # anything that comes from the config.
             c = Config()
             if os.path.isdir(f):
                 c.NotebookApp.notebook_dir = f
@@ -1129,9 +1126,9 @@ class NotebookApp(JupyterApp):
 def list_running_servers(runtime_dir=None):
     """Iterate over the server info files of running notebook servers.
     
-    Given a profile name, find nbserver-* files in the security directory of
-    that profile, and yield dicts of their information, each one pertaining to
-    a currently running notebook server instance.
+    Given a config runtime directory, find nbserver-* files in the security
+    directory of that runtime_dir, and yield dicts of their information, each
+    one pertaining to a currently running notebook server instance.
     """
     if runtime_dir is None:
         runtime_dir = jupyter_runtime_dir()
